@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Moon Wheel Test</title>
+
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.min.js"></script>
+
+<style>
+
+body{
+background:#0b0b12;
+color:white;
+font-family:serif;
+text-align:center;
+}
+
+canvas{
+margin-top:20px;
+}
+
+.slider{
+width:60%;
+}
+
+</style>
+</head>
+
+<body>
+
+<h2>Moon Wheel Test</h2>
+
+<p>Day: <span id="dayLabel">0</span></p>
+
+<input id="timeSlider" class="slider" type="range" min="0" max="240" value="0">
+
+<script>
+
+let day = 0
+
+const moons = [
+{name:"Moon1", speed:4, orbit:120},
+{name:"Moon2", speed:2, orbit:170},
+{name:"Moon3", speed:1, orbit:220}
+]
+
+function setup(){
+createCanvas(600,600)
+angleMode(DEGREES)
+}
+
+function draw(){
+
+background(10,10,20)
+
+translate(width/2,height/2)
+
+drawRings()
+
+drawPlanet()
+
+moons.forEach(m=>{
+drawMoon(m)
+})
+
+}
+
+function drawPlanet(){
+
+noStroke()
+fill(200,180,120)
+circle(0,0,40)
+
+}
+
+function drawRings(){
+
+noFill()
+stroke(80)
+
+moons.forEach(m=>{
+circle(0,0,m.orbit*2)
+})
+
+}
+
+function drawMoon(m){
+
+let pos = (day * m.speed) % 60
+let angle = pos * 6
+
+let x = cos(angle)*m.orbit
+let y = sin(angle)*m.orbit
+
+drawPhaseMoon(x,y,pos)
+
+}
+
+function drawPhaseMoon(x,y,pos){
+
+push()
+translate(x,y)
+
+fill(220)
+circle(0,0,20)
+
+let phaseAngle = map(pos,0,60,-180,180)
+
+fill(20)
+arc(0,0,20,20,90+phaseAngle,270+phaseAngle)
+
+pop()
+
+}
+
+document.getElementById("timeSlider").addEventListener("input", e=>{
+
+day = parseInt(e.target.value)
+document.getElementById("dayLabel").innerText = day
+
+})
+
+</script>
+
+</body>
+</html>
