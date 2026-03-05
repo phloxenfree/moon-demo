@@ -88,7 +88,11 @@ let infoHTML = ""
 
 moons.forEach(m=>{
 let result = drawMoon(m)
-infoHTML += `<div>${m.name} — <b>${result}</b></div>`
+infoHTML += `
+<div>
+${m.name} — <b>${result.phase}</b> (position ${result.position})
+</div>
+`
 })
 
 document.getElementById("info").innerHTML = infoHTML
@@ -121,11 +125,13 @@ let angle = (day % m.cycle) / m.cycle * 360
 let x = cos(angle) * m.orbit
 let y = sin(angle) * m.orbit
 
+let position = Math.floor(angle / 6)
+
 let phase = getPhase(angle)
 
 drawPhaseMoon(x,y,angle)
 
-return phase
+return {phase, position}
 
 }
 
