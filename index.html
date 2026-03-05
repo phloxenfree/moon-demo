@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+
 <title>Moon Wheel Test</title>
 
 <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.min.js"></script>
@@ -8,18 +9,23 @@
 <style>
 
 body{
-background:#0b0b12;
-color:white;
+background:#0a0a14;
+color:#e8e3c8;
 font-family:serif;
 text-align:center;
 }
 
-canvas{
-margin-top:20px;
+#info{
+margin-top:10px;
+border:1px solid #444;
+display:inline-block;
+padding:10px;
+background:#111;
 }
 
 .slider{
 width:60%;
+margin-top:10px;
 }
 
 </style>
@@ -33,14 +39,50 @@ width:60%;
 
 <input id="timeSlider" class="slider" type="range" min="0" max="240" value="0">
 
+<div id="info"></div>
+
 <script>
 
 let day = 0
 
 const moons = [
-{name:"Moon1", speed:4, orbit:120},
-{name:"Moon2", speed:2, orbit:170},
-{name:"Moon3", speed:1, orbit:220}
+
+{
+name:"Moon 1",
+speed:4,
+orbit:120,
+phases:{
+new:[[56,59],[0,4]],
+waxing:[8,20],
+full:[24,36],
+waning:[40,52]
+}
+},
+
+{
+name:"Moon 2",
+speed:2,
+orbit:170,
+phases:{
+new:[[54,59],[0,6]],
+waxing:[8,22],
+full:[24,36],
+waning:[38,52]
+}
+},
+
+{
+name:"Moon 3",
+speed:1,
+orbit:220,
+phases:{
+new:[[53,59],[0,7]],
+waxing:[8,22],
+full:[23,37],
+waning:[38,52]
+}
+}
+
 ]
 
 function setup(){
@@ -54,20 +96,27 @@ background(10,10,20)
 
 translate(width/2,height/2)
 
+drawCalendarWheel()
+
 drawRings()
 
 drawPlanet()
 
+let infoHTML = ""
+
 moons.forEach(m=>{
-drawMoon(m)
+let result = drawMoon(m)
+infoHTML += `<div>${m.name} — <b>${result}</b></div>`
 })
+
+document.getElementById("info").innerHTML = infoHTML
 
 }
 
 function drawPlanet(){
 
 noStroke()
-fill(200,180,120)
+fill(220,200,140)
 circle(0,0,40)
 
 }
@@ -91,30 +140,84 @@ let angle = pos * 6
 let x = cos(angle)*m.orbit
 let y = sin(angle)*m.orbit
 
+let phase = getPhase(pos,m.phases)
+
 drawPhaseMoon(x,y,pos)
+
+return phase
 
 }
 
 function drawPhaseMoon(x,y,pos){
 
 push()
+
 translate(x,y)
 
-fill(220)
+fill(230)
 circle(0,0,20)
 
 let phaseAngle = map(pos,0,60,-180,180)
 
-fill(20)
+fill(15)
 arc(0,0,20,20,90+phaseAngle,270+phaseAngle)
 
 pop()
 
 }
 
-document.getElementById("timeSlider").addEventListener("input", e=>{
+function drawCalendarWheel(){
+
+let radius = 260
+
+stroke(90)
+noFill()
+circle(0,0,radius*2)
+
+for(let i=0;i<60;i++){
+
+let angle = i*6
+
+let x1 = cos(angle)*radius
+let y1 = sin(angle)*radius
+
+let x2 = cos(angle)*(radius+10)
+let y2 = sin(angle)*(radius+10)
+
+stroke(120)
+
+line(x1,y1,x2,y2)
+
+}
+
+}
+
+function getPhase(pos,phases){
+
+for(let r of phases.new){
+
+if(pos>=r[0] && pos<=r[1])
+return "New"
+
+}
+
+if(pos>=phases.waxing[0] && pos<=phases.waxing[1])
+return "Waxing"
+
+if(pos>=phases.full[0] && pos<=phases.full[1])
+return "Full"
+
+if(pos>=phases.waning[0] && pos<=phases.waning[1])
+return "Waning"
+
+return "Transition"
+
+}
+
+document.getElementById("timeSlider").addEventListener("input",e=>{
 
 day = parseInt(e.target.value)
+
 document.getElementById("dayLabel").innerText = day
 
 })
