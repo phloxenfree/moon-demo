@@ -37,7 +37,7 @@ margin-top:10px;
 
 <p>Day: <span id="dayLabel">0</span></p>
 
-<input id="timeSlider" class="slider" type="range" min="0" max="240" value="0">
+<input id="timeSlider" class="slider" type="range" min="0" max="360" value="0">
 
 <div id="info"></div>
 
@@ -49,38 +49,20 @@ const moons = [
 
 {
 name:"Moon 1",
-speed:4,
-orbit:120,
-phases:{
-new:[[56,59],[0,4]],
-waxing:[8,20],
-full:[24,36],
-waning:[40,52]
-}
+cycle:15,
+orbit:120
 },
 
 {
 name:"Moon 2",
-speed:2,
-orbit:170,
-phases:{
-new:[[54,59],[0,6]],
-waxing:[8,22],
-full:[24,36],
-waning:[38,52]
-}
+cycle:30,
+orbit:170
 },
 
 {
 name:"Moon 3",
-speed:1,
-orbit:220,
-phases:{
-new:[[53,59],[0,7]],
-waxing:[8,22],
-full:[23,37],
-waning:[38,52]
-}
+cycle:60,
+orbit:220
 }
 
 ]
@@ -135,12 +117,12 @@ circle(0,0,m.orbit*2)
 function drawMoon(m){
 
 let pos = (day * m.speed) % 60
-let angle = pos * 6
+let angle = (day % m.cycle) / m.cycle * 360
 
-let x = cos(angle)*m.orbit
-let y = sin(angle)*m.orbit
+let x = cos(angle) * m.orbit
+let y = sin(angle) * m.orbit
 
-let phase = getPhase(pos,m.phases)
+let phase = getPhase(angle)
 
 drawPhaseMoon(x,y,pos)
 
@@ -157,7 +139,7 @@ translate(x,y)
 fill(230)
 circle(0,0,20)
 
-let phaseAngle = map(pos,0,60,-180,180)
+let phaseAngle = map(angle,0,360,-180,180)
 
 fill(15)
 arc(0,0,20,20,90+phaseAngle,270+phaseAngle)
@@ -192,25 +174,19 @@ line(x1,y1,x2,y2)
 
 }
 
-function getPhase(pos,phases){
+function getPhase(angle){
 
-for(let r of phases.new){
-
-if(pos>=r[0] && pos<=r[1])
+if(angle < 22.5 || angle >= 337.5)
 return "New"
 
-}
-
-if(pos>=phases.waxing[0] && pos<=phases.waxing[1])
+if(angle < 157.5)
 return "Waxing"
 
-if(pos>=phases.full[0] && pos<=phases.full[1])
+if(angle < 202.5)
 return "Full"
 
-if(pos>=phases.waning[0] && pos<=phases.waning[1])
+if(angle < 337.5)
 return "Waning"
-
-return "Transition"
 
 }
 
