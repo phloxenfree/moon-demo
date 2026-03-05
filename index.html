@@ -116,7 +116,6 @@ circle(0,0,m.orbit*2)
 
 function drawMoon(m){
 
-let pos = (day * m.speed) % 60
 let angle = (day % m.cycle) / m.cycle * 360
 
 let x = cos(angle) * m.orbit
@@ -124,13 +123,13 @@ let y = sin(angle) * m.orbit
 
 let phase = getPhase(angle)
 
-drawPhaseMoon(x,y,pos)
+drawPhaseMoon(x,y,angle)
 
 return phase
 
 }
 
-function drawPhaseMoon(x,y,pos){
+function drawPhaseMoon(x,y,angle){
 
 push()
 
@@ -156,9 +155,9 @@ stroke(90)
 noFill()
 circle(0,0,radius*2)
 
-for(let i=0;i<60;i++){
+for(let i=0;i<360;i++){
 
-let angle = i*6
+let angle = i
 
 let x1 = cos(angle)*radius
 let y1 = sin(angle)*radius
